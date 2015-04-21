@@ -1,38 +1,23 @@
 <html>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="st2draw.js"></script>
+  <script src="score-board-canvas.js"></script>
   <script>
     $(function(){
-      st2draw.WIDTH_SPAN = 128;
-      var canv = $('#canv').get(0).getContext('2d');
-      var data = {type:'TN',data:
-        [[{player:"ç≈å„ÇÃî”é`ÅFÇhÇmâ°ïl", win: 0}, {player:"sasimi",win:1}],
-         {player:"hoge", win:1} ]};
-
-      canv.font = "bold 18px 'MS PÉSÉVÉbÉN'";
-      st2draw.drawNameCallback = function(name, point, width){
-        var pading = 4;
-        var adjustHeight = 8;
-        canv.fillText(name, point[0]+pading,
-          point[1] + adjustHeight, width-4*pading);
+      var canvas = 
+        $('#canv').get(0).getContext('2d');
+      var data = {
+        type:"tounament",
+        body: {state:"yet",
+                    left: {
+                      state:"left",
+                      left:"haneimo",
+                      right:"pontaro"
+                    },
+                    right:"sasimi"}
       }
-
-      st2draw.drawLineCallback = function(start, end, color){
-        canv.beginPath();
-        canv.strokeStyle = color;
-        canv.lineWidth = 4;
-        canv.moveTo(start[0], start[1]);
-        canv.lineTo(end[0], end[1]);
-        canv.closePath();
-        canv.stroke();
-      }
-
-      var pointed;
-      $('#dbg').text(pointed = st2draw.treeAddPoints(data.data));
-
-      var lines = st2draw.tornament(pointed);
-      $('#dbg2').text(lines);
-      var s ="";
+      var scoreBoard =
+        new BasicScoreBoard( data );
+      scoreBoard.draw( canvas )
    });
   </script>
   <body>

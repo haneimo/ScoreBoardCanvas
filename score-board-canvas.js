@@ -1,17 +1,58 @@
-if(!st2draw){
-  var st2draw = {}
+var scoreBoardCanvas =
+  scoreBoardCanvas || {};
+
+scoreBoardCanvas.BasicScoreBoard
+ =  function( canvas, data ){
+    if( data.type != "tounament" ){
+      throw new Error(
+        data.type +
+         "ã¯æœªå¯¾å¿œã®ãƒ‡ãƒ¼ã‚¿ã§ã™ã€‚"
+      );
+    }
+    // ä»Šã¯tounamentåˆ†ã—ã‹
+    // ã‹ã‹ãªã„ãŒã€å¾Œã«ãƒªãƒ¼ã‚°åˆ†ã€
+    // ãƒãƒ¼ãƒ å¯¾æˆ¦åˆ†ã‚‚æ›¸ãã€‚
+    this.body = data.body;
+
+    this.HEIGHT_SPAN = -50;
+    this.WIDTH_SPAN  = 320;
+
+    this.COLOR_NORMAL = 
+       "rgb(0, 0, 0)";
+    this.COLOR_WIN =
+        "rgb(255,0,0)";
+    this.NAME_PRATE =
+        {width:200,height:40};
+    this.baseLeft = this.NAME_PRATE.width;
+    this.canvas = canvas;
+};
+
+scoreBoardCanvas.BasicScoreBoard.prototype = {
+  draw:function( ){
+    
+  },
+  _drawLine:function(
+      start, end, color){
+        var c = this.canvas;
+
+        c.beginPath();
+        c.strokeStyle = color;
+        c.lineWidth = 4;
+        c.moveTo(start[0], start[1]);
+        c.lineTo(end[0], end[1]);
+        c.closePath();
+        c.stroke();
+  },
+  _drawName:function( start,
+    end, name ){
+    
+  },
+  _dfs:function( tree ){
+     //æœªå®Ÿè£…
+  },
+
 }
 
-//ƒg[ƒiƒƒ“ƒg‚Ì•
-st2draw.HEIGHT_SPAN = -50;
-st2draw.WIDTH_SPAN  = 320;
-st2draw.BASELINE = 160;
-st2draw.COLOR_NORMAL = "rgb(0, 0, 0)";
-st2draw.COLOR_WIN = "rgb(255,0,0)";
-
-
-st2draw.drawLineCallback = function(start, end, color){};
-st2draw.drawNameCallback = function(name, point, size){};
 
 st2draw.tornament = function(rootTree){
   var drawLines = [];
@@ -46,7 +87,7 @@ st2draw.tornament = function(rootTree){
       var middle = [( left.point[0]+right.point[0])/2.0, level];
       var nextPoint = [ middle[0], middle[1] + st2draw.HEIGHT_SPAN];
 
-      //ƒpƒbƒN‚Ì‘Î‰
+      //Ã¯Â¿Â½pÃ¯Â¿Â½bÃ¯Â¿Â½NÃ¯Â¿Â½ÃŒâ€˜Ãâ€°Ã¯Â¿Â½
       var newPoint;
       if(left.point[1] > level){
         newPoint = [ left.point[0], level ];
@@ -81,11 +122,10 @@ st2draw.tornament = function(rootTree){
 }
 
 st2draw.treeAddPoints = function(tree, startPoint){
-  //•—Dæ’Tõ‚ğ—˜—p‚µ‚Ä“_‚ğƒcƒŠ[î•ñ‚É•t‰Á
   var count = 0;
   var dfs = function(tree){
     if( tree.player ){
-      tree.basePoint = [ (count++) * st2draw.WIDTH_SPAN ,
+      tree.basePoint = [ (count+1) * st2draw.WIDTH_SPAN ,
                           st2draw.BASELINE]; 
       return tree;
     }else{
@@ -94,3 +134,41 @@ st2draw.treeAddPoints = function(tree, startPoint){
   }
   return dfs(tree);
 }
+}
+
+ var data = {type:'TN',data:
+        [[{player:"ï¿½ÅŒï¿½Ì”Ó`ï¿½Fï¿½hï¿½mï¿½ï¿½ï¿½l", wins: 0}, {player:"sasimi",wins:1}],
+         {player:"hoge", wins:1} ]};
+
+      canv.font = "bold 18px 'MS Pï¿½Sï¿½Vï¿½bï¿½N'";
+      st2draw.drawNameCallback = function(name, point, width){
+        var pading = 4;
+        var adjustHeight = 8;
+        canv.fillText(name, point[0]+pading,
+          point[1] + adjustHeight, width-4*pading);
+      }
+
+      st2draw.drawLineCallback = function(start, end, color){
+        canv.beginPath();
+        canv.strokeStyle = color;
+        canv.lineWidth = 4;
+        canv.moveTo(start[0], start[1]);
+        canv.lineTo(end[0], end[1]);
+        canv.closePath();
+        canv.stroke();
+      }
+
+      var pointed;
+      $('#dbg').text(pointed = st2draw.treeAddPoints(data.data));
+
+      var lines = st2draw.tornament(pointed);
+      $('#dbg2').text(lines);
+      var s ="";
+   });
+  </script>
+  <body>
+    <div id="dbg">hoge</div>
+    <div id="dbg2">h</div>
+    <canvas id="canv" width="640" height="480"></canvas>
+  </body>
+</html>
