@@ -25,6 +25,8 @@ scoreBoardCanvas.BasicScoreBoard
         {width:200,height:40};
     this.baseLeft = this.NAME_PRATE.width;
     this.canvas = canvas;
+    this.canv.font = "bold 18px MS ゴシック";
+
 };
 
 scoreBoardCanvas.BasicScoreBoard.prototype = {
@@ -134,13 +136,11 @@ st2draw.treeAddPoints = function(tree, startPoint){
   }
   return dfs(tree);
 }
-}
 
  var data = {type:'TN',data:
         [[{player:"�Ō�̔ӎ`�F�h�m���l", wins: 0}, {player:"sasimi",wins:1}],
          {player:"hoge", wins:1} ]};
 
-      canv.font = "bold 18px 'MS P�S�V�b�N'";
       st2draw.drawNameCallback = function(name, point, width){
         var pading = 4;
         var adjustHeight = 8;
