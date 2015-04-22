@@ -52,4 +52,4 @@ datasにはscoreBoard用フォーマットのデータをバインドしてお�
         }
       }
 
-popCard
+popCardメソッドを実行すると、
