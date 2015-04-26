@@ -13,20 +13,27 @@ scoreBoardCanvas.BasicScoreBoard
     // かかないが、後にリーグ分、
     // チーム対戦分も書く。
     this.body = data.body;
-
     this.HEIGHT_SPAN = -50;
     this.WIDTH_SPAN  = 320;
 
-    this.COLOR_NORMAL = 
+    this.COLOR_NORMAL =
        "rgb(0, 0, 0)";
     this.COLOR_WIN =
         "rgb(255,0,0)";
     this.NAME_PRATE =
         {width:200,height:40};
-    this.baseLeft = this.NAME_PRATE.width;
+    this.baseLeft =
+      this.NAME_PRATE.width;
     this.canvas = canvas;
-    this.canv.font = "bold 18px MS ゴシック";
-
+    this.canv.font =
+      "bold 18px MS ゴシック";
+    
+    // ひとつの山の最小の高さ。
+    // トーナメントの描画領域を
+    //  トーナメントの山の深さで
+    //  割った数。
+    this.mountainHeightParOne =
+      height/this._depth();
 };
 
 scoreBoardCanvas.BasicScoreBoard.prototype = {
@@ -47,14 +54,39 @@ scoreBoardCanvas.BasicScoreBoard.prototype = {
   },
   _drawName:function( start,
     end, name ){
-    
+        var pading = 4;
+        var adjustHeight = 8;
+        // ここでboxを表示
+        this.canv.fillText(
+          name, point[0]+pading,
+          point[1] + adjustHeight,
+          width-4*pading
+        );
   },
   _dfs:function( tree ){
      //未実装
+     left
   },
-
+  _depth:function(tree){
+    return _innerDepth(this.body);
+  },
+  _innerDepth:
+    function(tounamentTree){
+    if( not tounamentTree.has "left"
+         || not tounamentTree.has "right"){
+      return 1;
+    }else{
+      return 1 + max(
+        this._innerDepth(
+          tounamentTree.left
+        ),
+        this._innerDepth(
+          tounamentTree.right
+        )
+      );
+    }
+  }
 }
-
 
 st2draw.tornament = function(rootTree){
   var drawLines = [];
