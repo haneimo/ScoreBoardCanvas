@@ -38,6 +38,11 @@ scoreBoardCanvas.BasicScoreBoard
 
 scoreBoardCanvas.BasicScoreBoard.prototype = {
   draw:function( ){
+    var root = this.body;
+    var shape = toDrawShape( root );
+  },
+  toDrawShape:function(
+    root, topPoint, ){
     
   },
   _drawLine:function(
