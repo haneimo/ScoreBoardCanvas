@@ -1,0 +1,26 @@
+<html>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="score-board-canvas.js"></script>
+  <script>
+    $(function(){
+      var canvas = 
+        $('#canv').get(0).getContext('2d');
+      var data = {
+        type:"tounament",
+        body: {state:"yet",
+                    left: {
+                      state:"left",
+                      left:"haneimo",
+                      right:"pontaro"
+                    },
+                    right:"sasimi"}
+      }
+      var scoreBoard =
+        new BasicScoreBoard( data );
+      scoreBoard.draw( canvas )
+   });
+  </script>
+  <body>
+    <canvas id="canv" width="640" height="480"></canvas>
+  </body>
+</html>
