@@ -7,13 +7,23 @@ describe('テスト実行環境において', function(){
 
 describe('BasicScpreBoard', function() {
   var canvas;
+  var scoreBoard;
+
   beforeEach(function() {
     canvas = document.getElementById('cnv').getContext('2d'); 
+    var data ={};
+ data.type='tounament';
+ data.body=[[],[]];
+
+    scoreBoard = new scoreBoardCanvas.BasicScoreBoard(canvas, data);
   })
   
-  it('のインスタンスを作成できること', function() {
-    var data = {type:'tounament'}
-    var scoreBoard = new scoreBoardCanvas.BasicScoreBoard(canvas, data);
+  it('のインスタンスをサンプルデータを使用して作成できること', function() {
    	expect(scoreBoard).toBeDefined();
+  });
+
+  it('の深さは3であること',function{
+    var depth =scoreBoard._getDepth();
+    expect(depth).toBe( 3 );
   });
 });

@@ -32,18 +32,36 @@ scoreBoardCanvas.BasicScoreBoard
     // トーナメントの描画領域を
     //  トーナメントの山の深さで
     //  割った数。
-    this.mountainHeightParOne =
+    this.marginHeigh =
       height/this._depth();
 };
 
 scoreBoardCanvas.BasicScoreBoard.prototype = {
   draw:function( ){
     var root = this.body;
-    var shape = toDrawShape( root );
+    var _shape = {};
+    _toDrawTounament( 
+       root, startPoint );
   },
-  toDrawShape:function(
-    root, topPoint, ){
-    
+  _toDrawTounament:function(
+    tree, topPoint){
+      var leftPoint;
+      var rightPoint;
+
+      if( _checkNodeTo( tree.left) ) {
+         var leftPoint = 
+           getConnectionPointFrom( 
+             tree.left , topPoint
+           )
+      }else{
+        var leftPoints = {
+           x: topPoint.x 
+               - this.marginHeigh,
+           y: _getCenterYFrom(
+                 tree.left
+               )
+         }
+      }
   },
   _drawLine:function(
       start, end, color){
@@ -67,10 +85,6 @@ scoreBoardCanvas.BasicScoreBoard.prototype = {
           point[1] + adjustHeight,
           width-4*pading
         );
-  },
-  _dfs:function( tree ){
-     //未実装
-     left
   },
   _depth:function(tree){
     return _innerDepth(this.body);
