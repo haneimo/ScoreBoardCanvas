@@ -1,6 +1,6 @@
 # ScoreBoardCanvasについて(こうだったら嬉しいな案)
 
-トーナメント表、リーグ表を指定したキャンバス領域に書き出すためのコードです。ScoreBoardオブジェクトを使います。
+トーナメント表、リーグ表を指定したキャンバス領域に書き出すためのコードを目指してコーディングしています。
 
 使い方の例
 
@@ -13,7 +13,7 @@
       new BasicScoreBoard( canvas, datas );
     basicScoreBoard.draw( );
 
-datasにはscoreBoard用フォーマットのデータをバインドしておきます。TounamentScoreBoardBilderオブジェクトを使用した方が若干組み立てやすいです。
+TounamentScoreBoardBuilderオブジェクトを使用するとちょっと組み立てられるようにしたい。
 
     var tounamentBuilder = 
       new  TounamentScoreBoardBuilder()
