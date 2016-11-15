@@ -51,5 +51,3 @@ datasにはscoreBoard用フォーマットのデータをバインドしてお�
           right:"player4Name"
         }
       }
-
-popCardメソッドを実行すると、
