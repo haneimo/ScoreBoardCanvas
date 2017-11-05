@@ -1,0 +1,336 @@
+<html>
+<script>
+  var scoreboard = {};
+  scoreboard.MSG_ERROR_NOT_TOUNAMENT_BASE_CREATED
+    = "内部処理でエラーが発生しました:"
+    + "先に_createTournamentBaseメソッドを使用して、"
+    + "トーナメントの底を確定する必要があります。";
+
+  scoreboard.STATE = {
+    WIN_LEFT:"WIN_LEFT", 
+    WIN_RIGHT:"WIN_RIGHT",
+    GETABYE_LEFT:"GETABYE_LEFT",
+    GETABYE_RIGHT:"GETABYE_RIGHT",
+    READY_LEFT:"WIN_RIGHT",
+    READY_RIGHT:"WIN_RIGHT",
+    READY_BOTH:"READY",
+    NON_STANDBY:"NON_STANDBY",
+  }
+
+  scoreboard.CliantDrawTournament = function( 
+    context, config, width, height, tournamentInfo ){
+    this.context = context;
+    this.canvasWidth = width;
+    this.canvasHeight = height;
+
+    this.widthPadding = 20;
+    this.heightPadding = 20;
+
+    this.tournamentHeight = height - this.heightPadding * 2 ;
+    this.tournamentWidth = width - this.widthPadding * 2;
+    this.tournamentInfo = tournamentInfo;
+    this.tournamentDepth = this._toDepth( this.tournamentInfo, 1 );
+
+    // 通常Vertival(縦)で描画する。
+    this.isHorizontal = true;
+    // 左から右へ、上から下へトーナメント表の方向を逆転させる。
+    this.isReverse = true;
+     
+    // 左から右へ、上から下へトーナメント表の方向を逆転させる。
+    // 1 Unitの高さ
+    if( this.isHorizontal ){
+      this.unitHeight = this.tournamentWidth / ( this.tournamentDepth );
+    } else {
+      this.unitHeight = this.tournamentHeight / ( this.tournamentDepth);
+    }
+    if( this.isReverse ){
+      this.unitHeight *= -1;
+    }
+
+    // Zoomモード
+    // ズームした時に線の太さは変わらない。
+    this.zoom = {
+      rate: 1,
+      center: {
+        x: width/2, 
+        y: height/2
+      }
+    };
+
+    this.drawTournament();
+    this._drawCanvasEdge();
+    this._drawTitle(30);
+  }
+  scoreboard.CliantDrawTournament.prototype = {
+    '_drawTitle':function( size ){ 
+      this.context.font= size+ "px MSGosic"
+      this.context.fillText( "Scoreboad.Tounament", 0, 0 + size );
+    },
+    _toMemberList:function( tournamentInfo ){
+       if( tournamentInfo.isNode ){
+         return this._toMemberList( tournamentInfo.left ) 
+           .concat( this._toMemberList( tournamentInfo.right ) )
+       } else{
+         return [ tournamentInfo ];
+       }
+    },
+    _toDepth:function( tournamentInfo, lank ){
+       if( tournamentInfo.isNode ){
+         return Math.max( 
+	   this._toDepth( tournamentInfo.left, lank + 1 ),
+           this._toDepth( tournamentInfo.right, lank + 1 )
+	   );
+       }else{
+         return lank;
+       }
+    },
+    '_drawCanvasEdge':function(){
+      this.context.strokeRect(0,0,
+        this.canvasWidth, this.canvasHeight);
+    },
+    _createTournamentBase:function(){
+       var memberList = this._toMemberList( this.tournamentInfo );
+       this.tournamentBasePosition = {};
+       var i;
+       var l=memberList.length;
+       for( i=0; i<l; i++){
+	 var basePos;
+	 if( this.isHorizontal ){
+           basePos = {
+	     x: 
+	        this.isReverse ?
+		this.widthPadding : 
+		this.tournamentWidth + this.widthPadding, 
+	     y: this.tournamentHeight * ( i / (l-1)) + this.heightPadding,
+	   }
+         } else {
+	   basePos = {
+	     x: this.tournamentWidth * ( i / (l-1)) + this.widthPadding,
+	     y: 
+	        this.isReverse ?
+		this.heightPadding :
+	        this.tournamentHeight + this.heightPadding  
+	   };
+	 }
+         this.tournamentBasePosition[ memberList[i].name ] = basePos;
+       }
+    },
+    drawTournament:function(){
+        this._createTournamentBase();
+        //トーナメントInfoのベースが先に計算されていない場合は使用できない
+        var lastInfo = this._drawTournamentUnitLine( 
+	  this.tournamentInfo, 1 );
+        this._drawTournamentLastLine( lastInfo.position );
+    },
+    _drawTournamentLastLine:function( position ){
+        var endPoint;
+	var symbolPoint;
+	if( this.isHorizontal ){
+          endPoint = {
+             x: position.x - this.unitHeight / 4,
+	     y: position.y 
+	  };
+          symbolPoint = {
+             x: position.x - this.unitHeight / 2,
+	     y: position.y
+	  };
+	} else {
+          endPoint = {
+            x: position.x,
+	    y: position.y - this.unitHeight / 4      
+	  };
+          symbolPoint = {
+             x: position.x ,
+	     y: position.y - this.unitHeight / 2
+	  };
+	}
+        if(true){
+            this.context.beginPath();
+            this.context.moveTo(
+                position.x, position.y );
+	    this.context.lineTo(
+                endPoint.x, endPoint.y ); 
+	    this.context.stroke();
+        }
+
+
+        var size = 42;
+	var msg = "Winner!"
+        var symbolPoint;
+	
+	this.context.font= size+ "px MSGosic"
+
+        this.context.fillText( 
+	    msg, symbolPoint.x, symbolPoint.y);
+    },
+    _drawTournamentUnitLine:function( tournamentInfo, rank ){
+      if( tournamentInfo.isNode ){
+        var leftInfo  = this._drawTournamentUnitLine( 
+	  tournamentInfo.left,
+          rank + 1
+	);
+	var rightInfo = this._drawTournamentUnitLine( 
+	  tournamentInfo.right,
+	  rank + 1
+	);
+
+        var nextPosition;
+        if( this.isHorizontal) {
+	  nextPosition = { 
+	       x: 
+	         this.isReverse ?
+		 rank * this.unitHeight 
+		   + this.tournamentWidth
+		   + this.widthPadding : 
+		 rank * this.unitHeight
+		   + this.widthPadding, 
+	       y: (leftInfo.position.y + rightInfo.position.y ) / 2 };
+        } else {
+	  nextPosition  = {
+	       x: ( leftInfo.position.x + rightInfo.position.x ) / 2,
+	       y: 
+	         this.isReverse ?
+		 rank * this.unitHeight 
+		   + this.tournamentHeight
+		   + this.heightPadding :
+	         rank * this.unitHeight + this.heightPadding };
+	}
+
+        this._drawTournamentUnit( 
+	   leftInfo.position,
+	   rightInfo.position,
+	   nextPosition,
+           tournamentInfo.state // WINLEFT, WINRIGHT, NOCONTEST 
+	);
+
+	return {
+          position : nextPosition,
+	}
+      } else {
+        // base, tournamentBaseから起点を取得する。
+	var position  = this.tournamentBasePosition[ tournamentInfo.name ];
+        var endmost = this.isHorizontal ? position.y : position.x;
+        return { 
+	     position     : position, 
+	  };
+      }
+    },
+    _drawTournamentUnit:function(leftPoint, rightPoint, topPoint, state){
+        if( true ){
+           this.context.beginPath();
+	   
+	   if(this.isHorizontal){
+             this.context.moveTo(
+	       topPoint.x,
+	       leftPoint.y
+	     );
+	   } else {
+	     this.context.moveTo(
+	       leftPoint.x,
+	       topPoint.y
+	     );
+	   }
+	   
+	   this.context.lineTo(
+             topPoint.x, topPoint.y );      
+	   this.context.stroke();
+	}
+        if( true ){
+           this.context.beginPath();
+	   if( this.isHorizontal ){
+	     this.context.moveTo(
+	       topPoint.x, 
+	       rightPoint.y
+	     );
+	   } else {
+	     this.context.moveTo(
+	       rightPoint.x,
+	       topPoint.y
+	     );
+	   }
+	   this.context.lineTo(
+             topPoint.x, topPoint.y );      
+	   this.context.stroke();
+	}
+        if( true ){
+           this.context.beginPath();
+	   this.context.moveTo(
+	     leftPoint.x, leftPoint.y)
+	   
+	   if( this.isHorizontal ){
+             this.context.lineTo(
+               topPoint.x, leftPoint.y );     
+	   } else {
+             this.context.lineTo(
+               leftPoint.x, topPoint.y );     
+	   }
+	   this.context.stroke();
+	}
+        if( true ){
+           this.context.beginPath();
+	   this.context.moveTo(
+	     rightPoint.x, rightPoint.y );
+	   if( this.isHorizontal ){
+	     this.context.lineTo(
+               topPoint.x, rightPoint.y );      
+	   } else {
+	     this.context.lineTo(
+               rightPoint.x, topPoint.y );      
+	   }
+	   this.context.stroke();
+	}
+      },
+      _drawTournamentLine:function(startPoiint, endPoint, state){
+	 if(state == scoreboard.STATE.NO_CONTEST){
+           this.context.beginPath();
+	   this.context.moveTo(
+	     startPoint.x, startPoint.y)
+	   this.context.lineTo(
+             endPoint.x, endPoint.y);      
+	   this.context.stroke();
+	 } else {
+           this.context.beginPath();
+	   this.context.moveTo(
+	     startPoint.x, startPoint.y)
+	   this.context.lineTo(
+             endPoint.x, endPoint.y);      
+	   this.context.stroke();
+	 }
+      }
+    }
+  
+
+  window.onload = function(){
+    var canvas = document.getElementById("scoreboad_tournament");
+    var tounament = new scoreboard.CliantDrawTournament(
+      canvas.getContext('2d'), null, canvas.width, canvas.height,
+      { isNode: true,
+      left:{
+      isNode: true,
+      left:{  isNode:true, 
+         left:{ isNode:false, name:"test player01"}, 
+	 right:{isNode:false, name:"test player02"} 
+      },
+      right:{  isNode:true, 
+         left:{ isNode:false, name:"test player03"}, 
+	 right:{isNode:false, name:"test player04"} 
+      }
+      },
+      right:{
+      isNode: true,
+      left:{  isNode:true, 
+         left:{ isNode:false, name:"test player05"}, 
+	 right:{isNode:false, name:"test player06"} 
+      },
+      right:{isNode:false, name:"test player08"} 
+      }}
+
+    );
+  }
+</script>
+<body>
+  <canvas id="scoreboad_tournament" width="640" height="480">
+    Canvas非対応のブラウザの様です。。。
+  </canvas>
+<body>
+</html>
